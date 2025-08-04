@@ -1,0 +1,39 @@
+{
+  "slides": [
+    {
+      "id": 1,
+      "title": "Добро пожаловать в Slider Project",
+      "description": "Это обучающий проект, демонстрирующий работу с Web Components и нативным JavaScript.",
+      "image": "https://picsum.photos/600/300?random=1",
+      "createdAt": "2024-01-01T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Web Components",
+      "description": "Проект использует нативные Web Components для создания переиспользуемых компонентов.",
+      "image": "https://picsum.photos/600/300?random=2",
+      "createdAt": "2024-01-02T00:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "SPA Архитектура",
+      "description": "Single Page Application подход с динамической загрузкой контента.",
+      "image": "https://picsum.photos/600/300?random=3",
+      "createdAt": "2024-01-03T00:00:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Виртуальный скролл",
+      "description": "Слайдер поддерживает виртуальный горизонтальный скролл с плавной анимацией.",
+      "image": "https://picsum.photos/600/300?random=4",
+      "createdAt": "2024-01-04T00:00:00Z"
+    },
+    {
+      "id": 5,
+      "title": "Кэширование данных",
+      "description": "Все данные кэшируются для улучшения производительности и уменьшения запросов к серверу.",
+      "image": "https://picsum.photos/600/300?random=5",
+      "createdAt": "2024-01-05T00:00:00Z"
+    }
+  ]
+}
