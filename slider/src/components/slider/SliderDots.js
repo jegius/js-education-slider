@@ -6,6 +6,7 @@ class SliderDots extends HTMLElement {
         this.currentIndex = 0;
         this.unsubscribeSlides = null;
         this.unsubscribeIndex = null;
+        this.isNavigating = false;
 
         try {
             this.sliderService = window.container.resolve('SliderService');
@@ -24,7 +25,6 @@ class SliderDots extends HTMLElement {
     }
 
     initFromService() {
-        // Инициализируем состояние из сервиса
         const slides = this.sliderService.getSlides();
         const index = this.sliderService.getCurrentIndex();
 
@@ -35,12 +35,10 @@ class SliderDots extends HTMLElement {
     }
 
     subscribeToService() {
-        // Подписываемся на изменения слайдов
         this.unsubscribeSlides = this.sliderService.subscribeToSlides((slides) => {
             this.setSlides(slides);
         });
 
-        // Подписываемся на изменения индекса
         this.unsubscribeIndex = this.sliderService.subscribeToIndex((index) => {
             this.setCurrentIndex(index);
         });
@@ -55,27 +53,42 @@ class SliderDots extends HTMLElement {
                 .slider-dots {
                     display: flex;
                     justify-content: center;
-                    gap: 10px;
-                    padding: 20px;
-                    background: rgba(255, 255, 255, 0.1);
+                    gap: 12px;
+                    padding: 25px;
+                    background: rgba(255, 255, 255, 0.9);
                     backdrop-filter: blur(10px);
                     border-radius: 0 0 12px 12px;
+                    border-top: 1px solid rgba(0, 0, 0, 0.1);
                 }
                 .dot {
-                    width: 12px;
-                    height: 12px;
+                    width: 14px;
+                    height: 14px;
                     border-radius: 50%;
-                    border: 2px solid white;
+                    border: 2px solid #667eea;
                     background: transparent;
                     cursor: pointer;
                     transition: all 0.3s ease;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
                 }
                 .dot.active {
-                    background: white;
-                    transform: scale(1.2);
+                    background: #667eea;
+                    border-color: #667eea;
+                    transform: scale(1.3);
                 }
                 .dot:hover {
-                    transform: scale(1.3);
+                    transform: scale(1.4);
+                    background: rgba(102, 126, 234, 0.3);
+                }
+                .dot:active {
+                    transform: scale(1.2);
+                }
+                .dot.navigating {
+                    opacity: 0.7;
+                    cursor: wait;
+                }
+                .dot:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
                 }
             </style>
             <div class="slider-dots"></div>
@@ -103,7 +116,17 @@ class SliderDots extends HTMLElement {
                 dot.classList.add('active');
             }
 
-            dot.addEventListener('click', () => this.goToSlide(index));
+            if (this.isNavigating) {
+                dot.classList.add('navigating');
+                dot.disabled = true;
+            }
+
+            // Важно: используем стрелочную функцию для правильного контекста
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.goToSlide(index);
+            });
+
             dotsContainer.appendChild(dot);
         });
     }
@@ -117,22 +140,45 @@ class SliderDots extends HTMLElement {
         const dots = this.shadowRoot.querySelectorAll('.dot');
         dots.forEach((dot, index) => {
             dot.classList.toggle('active', index === this.currentIndex);
+            dot.classList.remove('navigating');
+            dot.disabled = false;
         });
     }
 
-    goToSlide(index) {
-        if (this.sliderService) {
-            this.sliderService.goToSlide(index, this.slides);
+    async goToSlide(index) {
+        if (!this.sliderService || this.isNavigating || index === this.currentIndex) return;
+
+        this.isNavigating = true;
+        this.updateDotsNavigationState(); // Обновляем визуальное состояние
+
+        try {
+            await this.sliderService.goToSlide(index);
+        } catch (error) {
+            console.error('Error navigating to slide:', error);
+        } finally {
+            this.isNavigating = false;
+            this.updateDotsNavigationState(); // Обновляем визуальное состояние
         }
     }
 
+    updateDotsNavigationState() {
+        const dots = this.shadowRoot.querySelectorAll('.dot');
+        dots.forEach(dot => {
+            if (this.isNavigating) {
+                dot.classList.add('navigating');
+                dot.disabled = true;
+            } else {
+                dot.classList.remove('navigating');
+                dot.disabled = false;
+            }
+        });
+    }
+
     disconnectedCallback() {
-        if (this.unsubscribeSlides) {
-            this.unsubscribeSlides();
-        }
-        if (this.unsubscribeIndex) {
-            this.unsubscribeIndex();
-        }
+        const unsubscribes = [this.unsubscribeSlides, this.unsubscribeIndex];
+        unsubscribes.forEach(unsubscribe => {
+            if (unsubscribe) unsubscribe();
+        });
     }
 }
 

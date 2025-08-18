@@ -7,6 +7,8 @@ class SliderTrack extends HTMLElement {
         this.isAnimating = false;
         this.unsubscribeSlides = null;
         this.unsubscribeIndex = null;
+        this.unsubscribeLoading = null;
+        this.isLoading = false;
 
         try {
             this.sliderService = window.container.resolve('SliderService');
@@ -25,7 +27,6 @@ class SliderTrack extends HTMLElement {
     }
 
     initSlides() {
-        // Инициализируем слайды при подключении
         const slides = this.sliderService.getSlides();
         if (slides.length > 0) {
             this.setSlides(slides);
@@ -33,15 +34,25 @@ class SliderTrack extends HTMLElement {
     }
 
     subscribeToService() {
-        // Подписываемся на изменения слайдов
         this.unsubscribeSlides = this.sliderService.subscribeToSlides((slides) => {
             this.setSlides(slides);
         });
 
-        // Подписываемся на изменения индекса
         this.unsubscribeIndex = this.sliderService.subscribeToIndex((index) => {
             this.setCurrentIndex(index);
         });
+
+        this.unsubscribeLoading = this.sliderService.subscribeToLoading((loading) => {
+            this.isLoading = loading;
+            this.handleLoadingState();
+        });
+    }
+
+    handleLoadingState() {
+        const track = this.shadowRoot.querySelector('.slider-track');
+        if (track) {
+            track.style.opacity = this.isLoading ? '0.7' : '1';
+        }
     }
 
     render() {
@@ -54,7 +65,29 @@ class SliderTrack extends HTMLElement {
                 .slider-track {
                     display: flex;
                     width: 100%;
-                    transition: transform 0.3s ease;
+                    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                }
+                .loading-indicator {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-width: 100%;
+                    height: 400px;
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                    border-radius: 12px;
+                    margin: 10px;
+                }
+                .spinner {
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid #e9ecef;
+                    border-top: 4px solid #667eea;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
                 }
             </style>
             <div class="slider-track"></div>
@@ -70,18 +103,28 @@ class SliderTrack extends HTMLElement {
         const track = this.shadowRoot.querySelector('.slider-track');
         if (!track) return;
 
-        // Очищаем текущие слайды
         track.innerHTML = '';
 
-        // Создаем новые слайды
         this.slides.forEach((_, index) => {
             const slideElement = document.createElement('slider-slide');
             slideElement.setAttribute('data-index', index);
             track.appendChild(slideElement);
 
-            // Подписываем каждый слайд на свои данные
             this.subscribeSlideToData(slideElement, index);
         });
+
+        if (this.isLoading) {
+            this.addLoadingIndicator(track);
+        }
+    }
+
+    addLoadingIndicator(track) {
+        const loadingElement = document.createElement('div');
+        loadingElement.className = 'loading-indicator';
+        loadingElement.innerHTML = `
+            <div class="spinner"></div>
+        `;
+        track.appendChild(loadingElement);
     }
 
     subscribeSlideToData(slideElement, index) {
@@ -91,10 +134,8 @@ class SliderTrack extends HTMLElement {
             }
         });
 
-        // Сохраняем функцию отписки для очистки
         slideElement.unsubscribe = unsubscribe;
 
-        // Передаем начальные данные, если они есть
         const currentSlides = this.sliderService.getSlides();
         if (currentSlides[index]) {
             slideElement.slideData = currentSlides[index];
@@ -115,7 +156,7 @@ class SliderTrack extends HTMLElement {
 
         if (track) {
             track.style.transform = `translateX(-${index * slideWidth}px)`;
-            track.style.transition = 'transform 0.5s ease-in-out';
+            track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         }
 
         setTimeout(() => {
@@ -123,7 +164,7 @@ class SliderTrack extends HTMLElement {
             if (track) {
                 track.style.transition = '';
             }
-        }, 500);
+        }, 400);
     }
 
     getSlideWidth() {
@@ -132,15 +173,16 @@ class SliderTrack extends HTMLElement {
     }
 
     disconnectedCallback() {
-        // Отписываемся от сервиса
         if (this.unsubscribeSlides) {
             this.unsubscribeSlides();
         }
         if (this.unsubscribeIndex) {
             this.unsubscribeIndex();
         }
+        if (this.unsubscribeLoading) {
+            this.unsubscribeLoading();
+        }
 
-        // Отписываем все слайды
         const slideElements = this.shadowRoot.querySelectorAll('slider-slide');
         slideElements.forEach(slide => {
             if (slide.unsubscribe) {

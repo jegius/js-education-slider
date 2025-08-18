@@ -1,31 +1,28 @@
 export class EventEmitter {
     constructor() {
-        this.events = {};
+        this.events = new Map();
     }
 
     on(event, callback) {
-        if (!this.events[event]) {
-            this.events[event] = [];
+        if (!this.events.has(event)) {
+            this.events.set(event, new Set());
         }
-        this.events[event].push(callback);
+        this.events.get(event).add(callback);
 
-        // Возвращаем функцию для отписки
         return () => this.off(event, callback);
     }
 
     off(event, callback) {
-        if (!this.events[event]) return;
+        if (!this.events.has(event)) return;
 
-        const index = this.events[event].indexOf(callback);
-        if (index > -1) {
-            this.events[event].splice(index, 1);
-        }
+        this.events.get(event).delete(callback);
     }
 
     emit(event, data) {
-        if (!this.events[event]) return;
+        if (!this.events.has(event)) return;
 
-        this.events[event].forEach(callback => {
+
+        this.events.get(event).forEach(callback => {
             try {
                 callback(data);
             } catch (error) {

@@ -3,10 +3,19 @@ class SliderSlide extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this._slideData = null;
+        this.templateFunction = null;
+        this.unsubscribeTemplate = null;
+
+        try {
+            this.sliderService = window.container.resolve('SliderService');
+        } catch (error) {
+            console.error('Failed to resolve SliderService in SliderSlide:', error);
+            this.sliderService = null;
+        }
     }
 
     static get observedAttributes() {
-        return ['slide-data'];
+        return ['slide-data', 'template'];
     }
 
     set slideData(data) {
@@ -18,10 +27,32 @@ class SliderSlide extends HTMLElement {
         return this._slideData;
     }
 
+    set template(templateName) {
+        this.setAttribute('template', templateName);
+    }
+
+    get template() {
+        return this.getAttribute('template') || 'default';
+    }
+
     connectedCallback() {
+        if (this.sliderService) {
+            this.subscribeToTemplates();
+        }
         if (!this._slideData) {
             this.renderPlaceholder();
         }
+    }
+
+    subscribeToTemplates() {
+        this.unsubscribeTemplate = this.sliderService.subscribeToTemplates((templateData) => {
+            if (templateData.templateName === this.template) {
+                this.templateFunction = templateData.templateFunction;
+                if (this._slideData) {
+                    this.render();
+                }
+            }
+        });
     }
 
     renderPlaceholder() {
@@ -42,9 +73,30 @@ class SliderSlide extends HTMLElement {
                     color: #888;
                     font-style: italic;
                 }
+                .loading {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 10px;
+                }
+                .spinner {
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid #f3f3f3;
+                    border-top: 4px solid #667eea;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
             </style>
             <div class="slide-placeholder">
-                <p>Загрузка слайда...</p>
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Загрузка слайда...</p>
+                </div>
             </div>
         `;
     }
@@ -55,6 +107,34 @@ class SliderSlide extends HTMLElement {
             return;
         }
 
+        // Используем кастомный темплейт если доступен
+        if (this.templateFunction) {
+            this.renderCustomTemplate();
+        } else {
+            this.renderDefaultTemplate();
+        }
+    }
+
+    renderCustomTemplate() {
+        try {
+            const htmlContent = this.templateFunction(this._slideData);
+            this.shadowRoot.innerHTML = `
+                <style>
+                    :host {
+                        min-width: 100%;
+                        flex-shrink: 0;
+                    }
+                    ${this.getCustomStyles()}
+                </style>
+                ${htmlContent}
+            `;
+        } catch (error) {
+            console.error('Error rendering custom template:', error);
+            this.renderDefaultTemplate();
+        }
+    }
+
+    renderDefaultTemplate() {
         this.shadowRoot.innerHTML = `
             <style>
                 :host {
@@ -130,6 +210,27 @@ class SliderSlide extends HTMLElement {
                 </div>
             </div>
         `;
+    }
+
+    getCustomStyles() {
+        return `
+            .slider-slide {
+                min-width: 100%;
+                flex-shrink: 0;
+            }
+            .slide-content {
+                height: 400px;
+                border-radius: 12px;
+                margin: 10px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            }
+        `;
+    }
+
+    disconnectedCallback() {
+        if (this.unsubscribeTemplate) {
+            this.unsubscribeTemplate();
+        }
     }
 }
 

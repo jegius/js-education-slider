@@ -1,0 +1,13 @@
+{
+  "id": "0198a7af-e516-72b2-b779-367db367e5cc",
+  "event_type": "payment_update",
+  "data": {
+    "id": "0198a7af-e516-72b2-b779-367db367e5cc",
+    "order_id": "0198a7af-e515-7206-bbff-e3328e210691",
+    "status": {
+      "total_price_in_kopecks": 4500,
+      "payment_failure_reason": null,
+      "type": "holdTimeExeeded"
+    }
+  }
+}
