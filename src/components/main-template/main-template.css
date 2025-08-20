@@ -1,0 +1,30 @@
+:host {
+    display: block;
+}
+
+.app {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.header {
+    text-align: center;
+    padding: 2rem;
+    color: white;
+}
+
+.header h1 {
+    margin: 0 0 1rem 0;
+    font-size: 2.5rem;
+}
+
+.header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}

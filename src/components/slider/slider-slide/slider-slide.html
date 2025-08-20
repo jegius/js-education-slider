@@ -1,0 +1,23 @@
+<template id="slider-slide-placeholder">
+    <div class="slide-placeholder">
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Загрузка слайда...</p>
+        </div>
+    </div>
+</template>
+
+<template id="slider-slide-default">
+    <div class="slider-slide">
+        <div class="slide-content">
+            <img src="/placeholder.jpg" alt="Слайд" class="slide-image" onerror="this.src='/placeholder.jpg'">
+            <div class="slide-info">
+                <h3 class="slide-title">Без названия</h3>
+                <p class="slide-description">Описание отсутствует</p>
+                <div class="slide-meta">
+                    <span class="slide-id">ID: </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

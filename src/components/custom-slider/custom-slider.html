@@ -1,0 +1,35 @@
+<template id="custom-slider-loading">
+    <div class="slider-container">
+        <div class="loading-container">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</template>
+
+<template id="custom-slider-error">
+    <div style="padding: 20px; text-align: center; color: red; background: #ffe6e6; border-radius: 8px;">
+        <h3>Ошибка инициализации сервиса</h3>
+        <p>SliderService не найден в DI контейнере</p>
+        <div class="retry-container">
+            <button class="retry-btn" onclick="location.reload()">Повторить</button>
+        </div>
+    </div>
+</template>
+
+<template id="custom-slider-init-error">
+    <div style="padding: 20px; text-align: center; color: red; background: #ffe6e6; border-radius: 8px;">
+        <h3>Ошибка загрузки слайдера</h3>
+        <p id="error-message">Не удалось загрузить данные слайдера</p>
+        <div class="retry-container">
+            <button class="retry-btn" onclick="location.reload()">Повторить</button>
+        </div>
+    </div>
+</template>
+
+<template id="custom-slider-main">
+    <div class="slider-container">
+        <slider-track></slider-track>
+        <slider-controls></slider-controls>
+        <slider-dots></slider-dots>
+    </div>
+</template>
