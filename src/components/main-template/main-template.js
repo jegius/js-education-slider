@@ -1,22 +1,6 @@
 import cssContent from './main-template.css?raw';
 import htmlContent from './main-template.html?raw';
-
-const loadTemplate = async () => {
-    if (document.getElementById('main-template-content')) return;
-
-    try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, 'text/html');
-        const templates = doc.querySelectorAll('template');
-        templates.forEach(template => {
-            if (template.id && !document.getElementById(template.id)) {
-                document.head.appendChild(template);
-            }
-        });
-    } catch (error) {
-        console.error('Error parsing main-template.html:', error);
-    }
-};
+import { container } from '@/core/DI.js';
 
 class MainTemplate extends HTMLElement {
     constructor() {
@@ -25,7 +9,8 @@ class MainTemplate extends HTMLElement {
     }
 
     async connectedCallback() {
-        await loadTemplate();
+        const templateService = container.resolve('TemplateService');
+        await templateService.loadOnce('main-template', htmlContent);
         this.render();
     }
 

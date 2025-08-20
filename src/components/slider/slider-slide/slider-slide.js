@@ -1,26 +1,6 @@
-// components/slider/slider-slide/SliderSlide.js
 import cssContent from './slider-slide.css?raw';
 import htmlContent from './slider-slide.html?raw';
-import { container } from '@/core/DI.js'; // Используем '@/core/DI.js' как в основном коде
-
-// Загружаем HTML-шаблоны один раз
-const loadTemplate = async () => {
-    // Проверяем, загружен ли уже хотя бы один шаблон этого компонента
-    if (document.getElementById('slider-slide-placeholder')) return;
-
-    try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, 'text/html');
-        const templates = doc.querySelectorAll('template');
-        templates.forEach(template => {
-            if (template.id && !document.getElementById(template.id)) {
-                document.head.appendChild(template);
-            }
-        });
-    } catch (error) {
-        console.error('Error parsing slider-slide.html:', error);
-    }
-};
+import { container } from '@/core/DI.js';
 
 class SliderSlideController {
     constructor(element, sliderService) {
@@ -215,27 +195,20 @@ class SliderSlide extends HTMLElement {
         return this.getAttribute('template') || 'default';
     }
 
-    // Жизненный цикл: компонент добавлен в DOM
     async connectedCallback() {
-        // Загружаем шаблоны
-        await loadTemplate();
-        // Создаем и инициализируем контроллер
+        const templateService = container.resolve('TemplateService');
+        await templateService.loadOnce('slider-slide', htmlContent);
         this.controller = new SliderSlideController(this, this.sliderService);
         this.controller.init();
-        // Если данные были установлены до подключения, передаем их контроллеру
         if (this._slideData) {
             this.controller.slideData = this._slideData;
         }
     }
 
-    // Жизненный цикл: атрибут изменен
     attributeChangedCallback(name, oldValue, newValue) {
-        // Пока не добавляем специфичную логику для изменения атрибутов
     }
 
-    // Жизненный цикл: компонент удален из DOM
     disconnectedCallback() {
-        // Очищаем ресурсы контроллера
         if (this.controller) {
             this.controller.destroy();
         }

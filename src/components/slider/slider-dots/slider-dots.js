@@ -2,23 +2,6 @@ import cssContent from './slider-dots.css?raw';
 import htmlContent from './slider-dots.html?raw';
 import { container } from '@/core/DI.js';
 
-const loadTemplate = async () => {
-    if (document.getElementById('slider-dots-template')) return;
-
-    try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, 'text/html');
-        const templates = doc.querySelectorAll('template');
-        templates.forEach(template => {
-            if (template.id && !document.getElementById(template.id)) {
-                document.head.appendChild(template);
-            }
-        });
-    } catch (error) {
-        console.error('Error parsing slider-dots.html:', error);
-    }
-};
-
 class SliderDotsController {
     constructor(element, sliderService) {
         this.element = element;
@@ -168,7 +151,8 @@ class SliderDots extends HTMLElement {
     }
 
     async connectedCallback() {
-        await loadTemplate();
+        const templateService = container.resolve('TemplateService');
+        await templateService.loadOnce('slider-dots', htmlContent);
         this.controller = new SliderDotsController(this, this.sliderService);
         this.controller.init();
     }

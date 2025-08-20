@@ -2,22 +2,6 @@ import cssContent from './custom-slider.css?raw';
 import htmlContent from './custom-slider.html?raw';
 import { container } from '@/core/DI.js';
 
-const loadTemplate = async () => {
-    if (document.getElementById('custom-slider-loading')) return;
-
-    try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, 'text/html');
-        const templates = doc.querySelectorAll('template');
-        templates.forEach(template => {
-            if (template.id && !document.getElementById(template.id)) {
-                document.head.appendChild(template);
-            }
-        });
-    } catch (error) {
-        console.error('Error parsing custom-slider.html:', error);
-    }
-};
 
 class CustomSlider extends HTMLElement {
     constructor() {
@@ -28,7 +12,8 @@ class CustomSlider extends HTMLElement {
     }
 
     async connectedCallback() {
-        await loadTemplate();
+        const templateService = container.resolve('TemplateService');
+        await templateService.loadOnce('custom-slider', htmlContent);
         this.renderLoading();
         await this.initService();
     }

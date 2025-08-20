@@ -5,17 +5,15 @@ import { CacheService } from './services/CacheService.js';
 import { NavigationService } from './services/NavigationService.js';
 import { TemplateService } from './services/TemplateService.js';
 
-// Регистрируем сервисы в DI контейнере
 container.register('CacheService', () => new CacheService(50), { singleton: true });
 container.register('NavigationService', () => new NavigationService(), { singleton: true });
 container.register('TemplateService', () => new TemplateService(), { singleton: true });
 container.register('SliderService', () => new SliderService(), { singleton: true });
 
-// Делаем контейнер доступным глобально (если нужно)
 window.container = container;
 
-// Регистрируем кастомные темплейты после инициализации
 document.addEventListener('DOMContentLoaded', async () => {
+    await registerComponents();
     try {
         const sliderService = container.resolve('SliderService');
         await sliderService.initialize();
@@ -49,14 +47,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// --- ВАЖНО: Импортируем компоненты ПОСЛЕ регистрации сервисов ---
-import './components/main-template/main-template.js';
-import './components/custom-slider/custom-slider.js';
-import './components/slider/slider-track/slider-track.js';
-import './components/slider/slider-controls/slider-controls.js';
-import './components/slider/slider-dots/slider-dots.js';
-import './components/slider/slider-slide/slider-slide.js';
-// --- Конец важной секции ---
+async function registerComponents() {
+    await import('./components/main-template/main-template.js');
+    await import('./components/custom-slider/custom-slider.js');
+    await import('./components/slider/slider-track/slider-track.js');
+    await import('./components/slider/slider-controls/slider-controls.js');
+    await import('./components/slider/slider-dots/slider-dots.js');
+    await import('./components/slider/slider-slide/slider-slide.js');
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Slider Project initialized with fully decomposed services');

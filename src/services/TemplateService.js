@@ -1,7 +1,25 @@
 export class TemplateService {
     constructor() {
         this.templates = new Map();
+        this.loadedFiles = new Set();
         this.defaultTemplate = this.createDefaultTemplate();
+    }
+
+    async loadFromString(htmlContent) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+        const templates = doc.querySelectorAll('template');
+        templates.forEach(template => {
+            if (template.id && !document.getElementById(template.id)) {
+                document.head.appendChild(template);
+            }
+        });
+    }
+
+    async loadOnce(id, htmlContent) {
+        if (this.loadedFiles.has(id)) return;
+        await this.loadFromString(htmlContent);
+        this.loadedFiles.add(id);
     }
 
     createDefaultTemplate() {
@@ -28,13 +46,5 @@ export class TemplateService {
 
     getTemplate(name) {
         return this.templates.get(name) || this.defaultTemplate;
-    }
-
-    hasTemplate(name) {
-        return this.templates.has(name);
-    }
-
-    getAllTemplates() {
-        return new Map(this.templates);
     }
 }

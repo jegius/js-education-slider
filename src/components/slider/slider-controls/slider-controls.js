@@ -2,22 +2,6 @@ import cssContent from './slider-controls.css?raw';
 import htmlContent from './slider-controls.html?raw';
 import { container } from '@/core/DI.js';
 
-const loadTemplate = async () => {
-    if (document.getElementById('slider-controls-template')) return;
-
-    try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, 'text/html');
-        const templates = doc.querySelectorAll('template');
-        templates.forEach(template => {
-            if (template.id && !document.getElementById(template.id)) {
-                document.head.appendChild(template);
-            }
-        });
-    } catch (error) {
-        console.error('Error parsing slider-controls.html:', error);
-    }
-};
 
 class SliderControlsController {
     constructor(element, sliderService) {
@@ -172,7 +156,8 @@ class SliderControls extends HTMLElement {
     }
 
     async connectedCallback() {
-        await loadTemplate();
+        const templateService = container.resolve('TemplateService');
+        await templateService.loadOnce('slider-controls', htmlContent);
         this.controller = new SliderControlsController(this, this.sliderService);
         this.controller.init();
     }

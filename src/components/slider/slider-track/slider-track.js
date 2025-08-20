@@ -2,23 +2,6 @@ import cssContent from './slider-track.css?raw';
 import htmlContent from './slider-track.html?raw';
 import { container } from '@/core/DI.js';
 
-const loadTemplate = async () => {
-    if (document.getElementById('slider-track-template')) return;
-
-    try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, 'text/html');
-        const templates = doc.querySelectorAll('template');
-        templates.forEach(template => {
-            if (template.id && !document.getElementById(template.id)) {
-                document.head.appendChild(template);
-            }
-        });
-    } catch (error) {
-        console.error('Error parsing slider-track.html:', error);
-    }
-};
-
 class SliderTrackController {
     constructor(element, sliderService) {
         this.element = element;
@@ -182,7 +165,8 @@ class SliderTrack extends HTMLElement {
     }
 
     async connectedCallback() {
-        await loadTemplate();
+        const templateService = container.resolve('TemplateService');
+        await templateService.loadOnce('slider-track', htmlContent);
         this.controller = new SliderTrackController(this, this.sliderService);
         this.controller.init();
     }
