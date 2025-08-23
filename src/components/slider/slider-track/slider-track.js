@@ -27,8 +27,20 @@ class SliderTrackController {
             const styleElement = document.createElement('style');
             styleElement.textContent = cssContent;
             this.element.shadowRoot.appendChild(styleElement);
+
             const clone = document.importNode(template.content, true);
             this.element.shadowRoot.appendChild(clone);
+
+            // Создаем и добавляем controls
+            const controlsElement = document.createElement('slider-controls');
+            controlsElement.slot = 'controls';
+            this.element.appendChild(controlsElement);
+
+            // Создаем и добавляем dots
+            const dotsElement = document.createElement('slider-dots');
+            dotsElement.slot = 'dots';
+            this.element.appendChild(dotsElement);
+
         } else {
             console.error('SliderTrack template not found');
             this.element.shadowRoot.innerHTML = `<style>${cssContent}</style><div>Ошибка загрузки шаблона slider-track</div>`;

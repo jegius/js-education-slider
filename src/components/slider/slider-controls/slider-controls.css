@@ -9,6 +9,7 @@
     z-index: 10;
     left: calc(-1 * var(--size-controls-offset));
 }
+
 .slider-btn {
     background: rgba(255, 255, 255, 0.95);
     border: var(--size-controls-button-border-width) solid var(--color-button-border);
@@ -27,12 +28,14 @@
     box-shadow: var(--shadow-controls-button);
     flex-shrink: 0;
 }
+
 .slider-btn:hover:not(:disabled) {
     background: var(--color-text-light);
     transform: scale(1.1);
     box-shadow: var(--shadow-controls-button-hover);
     color: var(--color-button-hover);
 }
+
 .slider-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -41,10 +44,12 @@
     border-color: var(--color-button-disabled-border);
     color: var(--color-button-disabled-text);
 }
+
 .slider-btn.loading {
     opacity: 0.7;
     cursor: wait;
 }
+
 .spinner {
     width: var(--size-spinner-width-small);
     height: var(--size-spinner-height-small);
@@ -53,6 +58,7 @@
     border-radius: var(--size-border-radius-circle);
     animation: spin var(--size-track-transition-duration) linear infinite;
 }
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
