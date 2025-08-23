@@ -6,160 +6,149 @@ class SliderSlideController {
     constructor(element, sliderService) {
         this.element = element;
         this.sliderService = sliderService;
-        this._slideData = null;
-        this.templateFunction = null;
-        this.unsubscribeTemplate = null;
+        this.slideId = null;
+        this.subscription = null;
+        this.templateName = 'default';
     }
 
-    async init() {
-        // Если доступен сервис шаблонов, подписываемся на обновления
-        if (this.sliderService) {
-            this.subscribeToTemplates();
+    async init(slideId = null, templateName = 'default') {
+        if (slideId != null) {
+            this.slideId = slideId;
         }
-        // Если данных нет, показываем placeholder
-        if (!this._slideData) {
-            this.renderPlaceholder();
+        if (templateName) {
+            this.templateName = templateName;
+        }
+        if (this.slideId != null && this.sliderService) {
+            this.observeSlideData();
+        } else {
+            this.render(null);
         }
     }
 
-    // Подписка на обновления кастомных шаблонов
-    subscribeToTemplates() {
-        this.unsubscribeTemplate = this.sliderService.subscribeToTemplates((templateData) => {
-            // Проверяем, относится ли обновление к шаблону, используемому этим слайдом
-            if (templateData.name === this.element.template) {
-                this.templateFunction = templateData.templateFunction;
-                // Если данные уже есть, перерисовываем с новым шаблоном
-                if (this._slideData) {
-                    this.render();
-                }
-            }
-        });
+    observeSlideData() {
+        if (this.subscription) {
+            this.subscription();
+            this.subscription = null;
+        }
+        if (this.slideId != null && this.sliderService) {
+            const observeFn = this.sliderService.observeSlideData(this.slideId);
+            this.subscription = observeFn((newSlideData) => {
+                console.log(`SliderSlideController: Received new data for slide ${this.slideId}`, newSlideData);
+                this.render(newSlideData);
+            });
+        }
     }
 
-    // Сеттер для данных слайда
-    set slideData(data) {
-        this._slideData = data;
-        this.render();
+    setSlideId(id) {
+        if (this.slideId === id) return;
+        this.slideId = id;
+        this.observeSlideData();
+        if (this.slideId != null) {
+        } else {
+            this.render(null);
+        }
     }
 
-    // Геттер для данных слайда
-    get slideData() {
-        return this._slideData;
+    setTemplateName(templateName) {
+        this.templateName = templateName || 'default';
+        const currentData = this.sliderService?.getSlideData(this.slideId) || null;
+        this.render(currentData);
     }
 
-    // Основной метод рендеринга
-    render() {
-        if (!this._slideData) {
+    render(slideData) {
+        this.currentSlideData = slideData;
+
+        if (!slideData) {
             this.renderPlaceholder();
             return;
         }
-        // Если есть кастомный шаблон, используем его
-        if (this.templateFunction) {
-            this.renderCustomTemplate();
+
+        let templateFunction;
+        try {
+            templateFunction = this.sliderService?.getTemplate(this.templateName);
+        } catch (e) {
+            console.warn(`Template '${this.templateName}' not found, using default.`, e);
+            templateFunction = this.sliderService?.getTemplate('default');
+        }
+
+        if (templateFunction && typeof templateFunction === 'function' && this.templateName !== 'default') {
+            this.renderCustomTemplate(slideData, templateFunction);
         } else {
-            // Иначе используем стандартный шаблон
-            this.renderDefaultTemplate();
+            this.renderDefaultTemplate(slideData);
         }
     }
 
-    // Рендеринг placeholder'а
     renderPlaceholder() {
         const template = document.getElementById('slider-slide-placeholder');
         if (template) {
             this.element.shadowRoot.innerHTML = '';
-            // Вставляем CSS
             const styleElement = document.createElement('style');
             styleElement.textContent = cssContent;
             this.element.shadowRoot.appendChild(styleElement);
-
             const clone = document.importNode(template.content, true);
-            // Обновляем изображение в placeholder'е, если есть данные
-            const img = clone.querySelector('.slide-image');
-            if (img && this._slideData) {
-                img.src = this._slideData.image || '/placeholder.jpg';
-                img.alt = this._slideData.title || 'Слайд';
-            }
             this.element.shadowRoot.appendChild(clone);
         } else {
             console.error('SliderSlide placeholder template not found');
-            // Резервный вариант с базовыми стилями
             this.element.shadowRoot.innerHTML = `<style>${cssContent}</style><div>Ошибка загрузки шаблона slider-slide-placeholder</div>`;
         }
     }
 
-    // Рендеринг с кастомным шаблоном
-    renderCustomTemplate() {
+    renderCustomTemplate(slideData, templateFunction) {
         try {
-            // Генерируем HTML с помощью функции шаблона
-            const htmlContent = this.templateFunction(this._slideData);
-
+            const htmlContent = templateFunction(slideData);
             this.element.shadowRoot.innerHTML = '';
-
-            // Вставляем CSS
             const styleElement = document.createElement('style');
             styleElement.textContent = cssContent;
             this.element.shadowRoot.appendChild(styleElement);
-
-            // Вставляем сгенерированный HTML
             this.element.shadowRoot.innerHTML += htmlContent;
-
         } catch (error) {
             console.error('Error rendering custom template:', error);
-            // В случае ошибки используем стандартный шаблон
-            this.renderDefaultTemplate();
+            this.renderDefaultTemplate(slideData);
         }
     }
 
-    // Рендеринг со стандартным шаблоном
-    renderDefaultTemplate() {
+    renderDefaultTemplate(slideData) {
         const template = document.getElementById('slider-slide-default');
         if (template) {
             this.element.shadowRoot.innerHTML = '';
-            // Вставляем CSS
             const styleElement = document.createElement('style');
             styleElement.textContent = cssContent;
             this.element.shadowRoot.appendChild(styleElement);
-
-            // Клонируем шаблон
             const clone = document.importNode(template.content, true);
-            // Заполняем данными
             const img = clone.querySelector('.slide-image');
             const title = clone.querySelector('.slide-title');
             const description = clone.querySelector('.slide-description');
             const idSpan = clone.querySelector('.slide-id');
-
-            if (img) img.src = this._slideData.image || '/placeholder.jpg';
-            if (img) img.alt = this._slideData.title || 'Слайд';
-            if (title) title.textContent = this._slideData.title || 'Без названия';
-            if (description) description.textContent = this._slideData.description || 'Описание отсутствует';
-            if (idSpan) idSpan.textContent = `ID: ${this._slideData.id}`;
-
+            if (img) img.src = slideData.image || '/placeholder.jpg';
+            if (img) img.alt = slideData.title || 'Слайд';
+            if (title) title.textContent = slideData.title || 'Без названия';
+            if (description) description.textContent = slideData.description || 'Описание отсутствует';
+            if (idSpan) idSpan.textContent = `ID: ${slideData.id}`;
             this.element.shadowRoot.appendChild(clone);
         } else {
             console.error('SliderSlide default template not found');
-            // Резервный вариант с базовыми стилями
             this.element.shadowRoot.innerHTML = `<style>${cssContent}</style><div>Ошибка загрузки шаблона slider-slide-default</div>`;
         }
     }
 
-    // Очистка подписок
     destroy() {
-        if (this.unsubscribeTemplate) {
-            this.unsubscribeTemplate();
+        if (this.subscription) {
+            this.subscription();
+            this.subscription = null;
         }
+        this.slideId = null;
+        this.currentSlideData = null;
+        this.templateName = 'default';
     }
 }
 
-// Основной Web Component
 class SliderSlide extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         this.controller = null;
-        this._slideData = null;
-        this.unsubscribeTemplate = null;
+        this._slideId = null;
         this.sliderService = null;
-        // Пытаемся получить сервис через DI
         try {
             this.sliderService = container.resolve('SliderService');
         } catch (error) {
@@ -167,30 +156,34 @@ class SliderSlide extends HTMLElement {
         }
     }
 
-    // Наблюдаемые атрибуты
     static get observedAttributes() {
-        return ['slide-data', 'template'];
+        return ['slide-id', 'template'];
     }
 
-    // Сеттер для данных слайда
-    set slideData(data) {
-        this._slideData = data;
+    set slideId(id) {
+        const numericId = (typeof id === 'string') ? parseInt(id, 10) : id;
+        if (isNaN(numericId) && id !== null && id !== undefined) {
+            console.warn('Invalid slide ID provided to slideId setter:', id);
+            return;
+        }
+        this._slideId = numericId;
+        this.setAttribute('slide-id', numericId);
         if (this.controller) {
-            this.controller.slideData = data;
+            this.controller.setSlideId(numericId);
         }
     }
 
-    // Геттер для данных слайда
-    get slideData() {
-        return this._slideData;
+    get slideId() {
+        return this._slideId;
     }
 
-    // Сеттер для имени шаблона
     set template(templateName) {
         this.setAttribute('template', templateName);
+        if (this.controller) {
+            this.controller.setTemplateName(templateName);
+        }
     }
 
-    // Геттер для имени шаблона
     get template() {
         return this.getAttribute('template') || 'default';
     }
@@ -198,14 +191,35 @@ class SliderSlide extends HTMLElement {
     async connectedCallback() {
         const templateService = container.resolve('TemplateService');
         await templateService.loadOnce('slider-slide', htmlContent);
+
         this.controller = new SliderSlideController(this, this.sliderService);
-        this.controller.init();
-        if (this._slideData) {
-            this.controller.slideData = this._slideData;
-        }
+
+        const initialTemplate = this.getAttribute('template') || 'default';
+        this.controller.init(this._slideId, initialTemplate);
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'slide-id') {
+            if (newValue === null) {
+                this._slideId = null;
+            } else {
+                const parsedId = parseInt(newValue, 10);
+                if (!isNaN(parsedId)) {
+                    this._slideId = parsedId;
+                } else {
+                    console.warn('Invalid slide-id attribute value:', newValue);
+                    this._slideId = null;
+                }
+            }
+            if (this.controller) {
+                this.controller.setSlideId(this._slideId);
+            }
+        }
+        if (name === 'template') {
+            if (this.controller) {
+                this.controller.setTemplateName(newValue);
+            }
+        }
     }
 
     disconnectedCallback() {
@@ -215,5 +229,4 @@ class SliderSlide extends HTMLElement {
     }
 }
 
-// Регистрируем кастомный элемент
 customElements.define('slider-slide', SliderSlide);

@@ -7,8 +7,6 @@ class SliderTrackController {
         this.element = element;
         this.sliderService = sliderService;
         this.slides = [];
-        this.currentIndex = 0;
-        this.isAnimating = false;
         this.unsubscribeSlides = null;
         this.unsubscribeIndex = null;
         this.unsubscribeLoading = null;
@@ -20,7 +18,6 @@ class SliderTrackController {
             console.error('SliderService not available in SliderTrackController');
             return;
         }
-
         this.render();
         this.subscribeToService();
         this.initSlides();
@@ -30,11 +27,9 @@ class SliderTrackController {
         const template = document.getElementById('slider-track-template');
         if (template) {
             this.element.shadowRoot.innerHTML = '';
-            // Вставляем стили
             const styleElement = document.createElement('style');
             styleElement.textContent = cssContent;
             this.element.shadowRoot.appendChild(styleElement);
-
             const clone = document.importNode(template.content, true);
             this.element.shadowRoot.appendChild(clone);
         } else {
@@ -79,11 +74,15 @@ class SliderTrackController {
         const track = this.element.shadowRoot.querySelector('.slider-track');
         if (!track) return;
         track.innerHTML = '';
-        this.slides.forEach((_, index) => {
+        this.slides.forEach((slideData, index) => {
             const slideElement = document.createElement('slider-slide');
             slideElement.setAttribute('data-index', index.toString());
+            if (slideData && slideData.id != null) {
+                slideElement.setAttribute('slide-id', slideData.id.toString());
+            } else {
+                console.warn(`Slide at index ${index} has no valid ID`, slideData);
+            }
             track.appendChild(slideElement);
-            this.subscribeSlideToData(slideElement, index);
         });
         if (this.isLoading) {
             this.addLoadingIndicator(track);
@@ -97,39 +96,21 @@ class SliderTrackController {
         track.appendChild(loadingElement);
     }
 
-    subscribeSlideToData(slideElement, index) {
-        const unsubscribe = this.sliderService.on('slidesChanged', (slides) => {
-            if (slides[index]) {
-                slideElement.slideData = slides[index];
-            }
-        });
-        slideElement.unsubscribe = unsubscribe;
-        const currentSlides = this.sliderService.getSlides();
-        if (currentSlides[index]) {
-            slideElement.slideData = currentSlides[index];
-        }
-    }
-
     setCurrentIndex(index) {
         this.currentIndex = index;
         this.scrollToSlide(index);
     }
 
     scrollToSlide(index) {
-        if (this.isAnimating) return;
-        this.isAnimating = true;
         const track = this.element.shadowRoot.querySelector('.slider-track');
         const slideWidth = this.getSlideWidth();
-        if (track) {
-            track.style.transform = `translateX(-${index * slideWidth}px)`;
+        if (!track) return;
+        track.style.transition = 'none';
+        track.style.transform = `translateX(-${index * slideWidth}px)`;
+        requestAnimationFrame(() => {
             track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        }
-        setTimeout(() => {
-            this.isAnimating = false;
-            if (track) {
-                track.style.transition = '';
-            }
-        }, 400);
+            track.style.transform = `translateX(-${index * slideWidth}px)`;
+        });
     }
 
     getSlideWidth() {
@@ -141,13 +122,6 @@ class SliderTrackController {
         if (this.unsubscribeSlides) this.unsubscribeSlides();
         if (this.unsubscribeIndex) this.unsubscribeIndex();
         if (this.unsubscribeLoading) this.unsubscribeLoading();
-
-        const slideElements = this.element.shadowRoot.querySelectorAll('slider-slide');
-        slideElements.forEach(slide => {
-            if (slide.unsubscribe) {
-                slide.unsubscribe();
-            }
-        });
     }
 }
 
