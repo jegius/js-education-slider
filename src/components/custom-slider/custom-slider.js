@@ -1,8 +1,6 @@
 import cssContent from './custom-slider.css?raw';
 import htmlContent from './custom-slider.html?raw';
 import { container } from '@/core/DI.js';
-
-
 class CustomSlider extends HTMLElement {
     constructor() {
         super();
@@ -10,23 +8,19 @@ class CustomSlider extends HTMLElement {
         this.sliderService = null;
         this.unsubscribeError = null;
     }
-
     async connectedCallback() {
         const templateService = container.resolve('TemplateService');
         await templateService.loadOnce('custom-slider', htmlContent);
         this.renderLoading();
         await this.initService();
     }
-
     render(templateId) {
         const template = document.getElementById(templateId);
         if (template) {
             this.shadowRoot.innerHTML = '';
-            // Вставляем стили
             const styleElement = document.createElement('style');
             styleElement.textContent = cssContent;
             this.shadowRoot.appendChild(styleElement);
-
             const clone = document.importNode(template.content, true);
             this.shadowRoot.appendChild(clone);
         } else {
@@ -34,17 +28,13 @@ class CustomSlider extends HTMLElement {
             this.shadowRoot.innerHTML = `<style>${cssContent}</style><div>Ошибка: шаблон ${templateId} не найден</div>`;
         }
     }
-
     renderLoading() {
         this.render('custom-slider-loading');
     }
-
     renderSlider() {
         this.render('custom-slider-main');
     }
-
     showServiceError() {
-        // Для ошибок создаем содержимое динамически с включенными стилями
         this.shadowRoot.innerHTML = `
             <style>${cssContent}</style>
             <div style="padding: 20px; text-align: center; color: red; background: #ffe6e6; border-radius: 8px;">
@@ -56,7 +46,6 @@ class CustomSlider extends HTMLElement {
             </div>
         `;
     }
-
     showInitializationError(error) {
         this.shadowRoot.innerHTML = `
             <style>${cssContent}</style>
@@ -69,7 +58,6 @@ class CustomSlider extends HTMLElement {
             </div>
         `;
     }
-
     async initService() {
         try {
             this.sliderService = container.resolve('SliderService');
@@ -85,12 +73,10 @@ class CustomSlider extends HTMLElement {
             this.showServiceError();
         }
     }
-
     disconnectedCallback() {
         if (this.unsubscribeError) {
             this.unsubscribeError();
         }
     }
 }
-
 customElements.define('custom-slider', CustomSlider);

@@ -1,7 +1,6 @@
 import cssContent from './slider-dots.css?raw';
 import htmlContent from './slider-dots.html?raw';
 import { container } from '@/core/DI.js';
-
 class SliderDotsController {
     constructor(element, sliderService) {
         this.element = element;
@@ -12,27 +11,22 @@ class SliderDotsController {
         this.unsubscribeIndex = null;
         this.isNavigating = false;
     }
-
     async init() {
         if (!this.sliderService) {
             console.error('SliderService not available in SliderDotsController');
             return;
         }
-
         this.render();
         this.subscribeToService();
         this.initFromService();
     }
-
     render() {
         const template = document.getElementById('slider-dots-template');
         if (template) {
             this.element.shadowRoot.innerHTML = '';
-            // Вставляем стили
             const styleElement = document.createElement('style');
             styleElement.textContent = cssContent;
             this.element.shadowRoot.appendChild(styleElement);
-
             const clone = document.importNode(template.content, true);
             this.element.shadowRoot.appendChild(clone);
         } else {
@@ -40,7 +34,6 @@ class SliderDotsController {
             this.element.shadowRoot.innerHTML = `<style>${cssContent}</style><div>Ошибка загрузки шаблона slider-dots</div>`;
         }
     }
-
     initFromService() {
         const slides = this.sliderService.getSlides();
         const index = this.sliderService.getCurrentIndex();
@@ -49,7 +42,6 @@ class SliderDotsController {
         }
         this.setCurrentIndex(index);
     }
-
     subscribeToService() {
         this.unsubscribeSlides = this.sliderService.subscribeToSlides((slides) => {
             this.setSlides(slides);
@@ -58,12 +50,10 @@ class SliderDotsController {
             this.setCurrentIndex(index);
         });
     }
-
     setSlides(slides) {
         this.slides = slides || [];
         this.renderDots();
     }
-
     renderDots() {
         const dotsContainer = this.element.shadowRoot.querySelector('.slider-dots');
         if (!dotsContainer) return;
@@ -87,12 +77,10 @@ class SliderDotsController {
             dotsContainer.appendChild(dot);
         });
     }
-
     setCurrentIndex(index) {
         this.currentIndex = index;
         this.updateActiveDot();
     }
-
     updateActiveDot() {
         const dots = this.element.shadowRoot.querySelectorAll('.dot');
         dots.forEach((dot, index) => {
@@ -101,7 +89,6 @@ class SliderDotsController {
             dot.disabled = false;
         });
     }
-
     async goToSlide(index) {
         if (!this.sliderService || this.isNavigating || index === this.currentIndex) return;
         this.isNavigating = true;
@@ -115,7 +102,6 @@ class SliderDotsController {
             this.updateDotsNavigationState();
         }
     }
-
     updateDotsNavigationState() {
         const dots = this.element.shadowRoot.querySelectorAll('.dot');
         dots.forEach(dot => {
@@ -128,7 +114,6 @@ class SliderDotsController {
             }
         });
     }
-
     destroy() {
         const unsubscribes = [this.unsubscribeSlides, this.unsubscribeIndex];
         unsubscribes.forEach(unsubscribe => {
@@ -136,7 +121,6 @@ class SliderDotsController {
         });
     }
 }
-
 class SliderDots extends HTMLElement {
     constructor() {
         super();
@@ -149,19 +133,16 @@ class SliderDots extends HTMLElement {
             console.error('Failed to resolve SliderService in SliderDots component:', error);
         }
     }
-
     async connectedCallback() {
         const templateService = container.resolve('TemplateService');
         await templateService.loadOnce('slider-dots', htmlContent);
         this.controller = new SliderDotsController(this, this.sliderService);
         this.controller.init();
     }
-
     disconnectedCallback() {
         if (this.controller) {
             this.controller.destroy();
         }
     }
 }
-
 customElements.define('slider-dots', SliderDots);

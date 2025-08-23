@@ -6,7 +6,7 @@
 .slider-track {
     display: flex;
     width: 100%;
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform var(--size-track-transition-duration) var(--size-track-transition-timing-function);
 }
 
 .loading-indicator {
@@ -14,19 +14,19 @@
     align-items: center;
     justify-content: center;
     min-width: 100%;
-    height: 400px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-radius: 12px;
+    height: var(--size-placeholder-height);
+    background: linear-gradient(135deg, var(--color-loading-indicator-bg-gradient-start) 0%, var(--color-loading-indicator-bg-gradient-end) 100%);
+    border-radius: var(--size-border-radius-large);
     margin: 10px;
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #e9ecef;
-    border-top: 4px solid #667eea;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    width: var(--size-spinner-width);
+    height: var(--size-spinner-height);
+    border: var(--size-spinner-border-width) solid var(--color-spinner-border-secondary);
+    border-top: var(--size-spinner-border-width) solid var(--color-spinner-border-top);
+    border-radius: var(--size-border-radius-circle);
+    animation: spin var(--size-track-transition-duration) linear infinite;
 }
 
 @keyframes spin {

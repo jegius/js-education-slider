@@ -4,7 +4,6 @@ export class TemplateService {
         this.loadedFiles = new Set();
         this.defaultTemplate = this.createDefaultTemplate();
     }
-
     async loadFromString(htmlContent) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlContent, 'text/html');
@@ -15,13 +14,11 @@ export class TemplateService {
             }
         });
     }
-
     async loadOnce(id, htmlContent) {
         if (this.loadedFiles.has(id)) return;
         await this.loadFromString(htmlContent);
         this.loadedFiles.add(id);
     }
-
     createDefaultTemplate() {
         return (slideData) => `
             <div class="slide-content">
@@ -39,11 +36,9 @@ export class TemplateService {
             </div>
         `;
     }
-
     registerTemplate(name, templateFunction) {
         this.templates.set(name, templateFunction);
     }
-
     getTemplate(name) {
         return this.templates.get(name) || this.defaultTemplate;
     }

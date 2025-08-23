@@ -1,7 +1,6 @@
 import cssContent from './slider-slide.css?raw';
 import htmlContent from './slider-slide.html?raw';
 import { container } from '@/core/DI.js';
-
 class SliderSlideController {
     constructor(element, sliderService) {
         this.element = element;
@@ -10,7 +9,6 @@ class SliderSlideController {
         this.subscription = null;
         this.templateName = 'default';
     }
-
     async init(slideId = null, templateName = 'default') {
         if (slideId != null) {
             this.slideId = slideId;
@@ -24,7 +22,6 @@ class SliderSlideController {
             this.render(null);
         }
     }
-
     observeSlideData() {
         if (this.subscription) {
             this.subscription();
@@ -38,7 +35,6 @@ class SliderSlideController {
             });
         }
     }
-
     setSlideId(id) {
         if (this.slideId === id) return;
         this.slideId = id;
@@ -48,21 +44,17 @@ class SliderSlideController {
             this.render(null);
         }
     }
-
     setTemplateName(templateName) {
         this.templateName = templateName || 'default';
         const currentData = this.sliderService?.getSlideData(this.slideId) || null;
         this.render(currentData);
     }
-
     render(slideData) {
         this.currentSlideData = slideData;
-
         if (!slideData) {
             this.renderPlaceholder();
             return;
         }
-
         let templateFunction;
         try {
             templateFunction = this.sliderService?.getTemplate(this.templateName);
@@ -70,14 +62,12 @@ class SliderSlideController {
             console.warn(`Template '${this.templateName}' not found, using default.`, e);
             templateFunction = this.sliderService?.getTemplate('default');
         }
-
         if (templateFunction && typeof templateFunction === 'function' && this.templateName !== 'default') {
             this.renderCustomTemplate(slideData, templateFunction);
         } else {
             this.renderDefaultTemplate(slideData);
         }
     }
-
     renderPlaceholder() {
         const template = document.getElementById('slider-slide-placeholder');
         if (template) {
@@ -92,7 +82,6 @@ class SliderSlideController {
             this.element.shadowRoot.innerHTML = `<style>${cssContent}</style><div>Ошибка загрузки шаблона slider-slide-placeholder</div>`;
         }
     }
-
     renderCustomTemplate(slideData, templateFunction) {
         try {
             const htmlContent = templateFunction(slideData);
@@ -106,7 +95,6 @@ class SliderSlideController {
             this.renderDefaultTemplate(slideData);
         }
     }
-
     renderDefaultTemplate(slideData) {
         const template = document.getElementById('slider-slide-default');
         if (template) {
@@ -130,7 +118,6 @@ class SliderSlideController {
             this.element.shadowRoot.innerHTML = `<style>${cssContent}</style><div>Ошибка загрузки шаблона slider-slide-default</div>`;
         }
     }
-
     destroy() {
         if (this.subscription) {
             this.subscription();
@@ -141,7 +128,6 @@ class SliderSlideController {
         this.templateName = 'default';
     }
 }
-
 class SliderSlide extends HTMLElement {
     constructor() {
         super();
@@ -155,11 +141,9 @@ class SliderSlide extends HTMLElement {
             console.error('Failed to resolve SliderService in SliderSlide:', error);
         }
     }
-
     static get observedAttributes() {
         return ['slide-id', 'template'];
     }
-
     set slideId(id) {
         const numericId = (typeof id === 'string') ? parseInt(id, 10) : id;
         if (isNaN(numericId) && id !== null && id !== undefined) {
@@ -172,32 +156,25 @@ class SliderSlide extends HTMLElement {
             this.controller.setSlideId(numericId);
         }
     }
-
     get slideId() {
         return this._slideId;
     }
-
     set template(templateName) {
         this.setAttribute('template', templateName);
         if (this.controller) {
             this.controller.setTemplateName(templateName);
         }
     }
-
     get template() {
         return this.getAttribute('template') || 'default';
     }
-
     async connectedCallback() {
         const templateService = container.resolve('TemplateService');
         await templateService.loadOnce('slider-slide', htmlContent);
-
         this.controller = new SliderSlideController(this, this.sliderService);
-
         const initialTemplate = this.getAttribute('template') || 'default';
         this.controller.init(this._slideId, initialTemplate);
     }
-
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'slide-id') {
             if (newValue === null) {
@@ -221,12 +198,10 @@ class SliderSlide extends HTMLElement {
             }
         }
     }
-
     disconnectedCallback() {
         if (this.controller) {
             this.controller.destroy();
         }
     }
 }
-
 customElements.define('slider-slide', SliderSlide);

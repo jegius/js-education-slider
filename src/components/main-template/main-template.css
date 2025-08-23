@@ -4,27 +4,27 @@
 
 .app {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--color-background-gradient-start) 0%, var(--color-background-gradient-end) 100%);
 }
 
 .header {
     text-align: center;
-    padding: 2rem;
-    color: white;
+    padding: var(--size-app-header-padding);
+    color: var(--color-text-light);
 }
 
 .header h1 {
     margin: 0 0 1rem 0;
-    font-size: 2.5rem;
+    font-size: var(--size-app-header-title-font-size);
 }
 
 .header p {
-    font-size: 1.2rem;
+    font-size: var(--size-app-header-subtitle-font-size);
     opacity: 0.9;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: var(--size-app-container-padding);
 }

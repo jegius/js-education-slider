@@ -1,47 +1,47 @@
 .slider-controls {
     position: absolute;
     top: 50%;
-    width: calc(100% + 80px); /* Выход за границы контейнера слайдера */
+    width: calc(100% + (var(--size-controls-offset) * 2));
     display: flex;
     justify-content: space-between;
     transform: translateY(-50%);
-    pointer-events: none; /* Позволяет кликать сквозь контейнер */
+    pointer-events: none;
     z-index: 10;
-    left: -40px; /* Центрирование относительно слайдера */
+    left: calc(-1 * var(--size-controls-offset));
 }
 
 .slider-btn {
     background: rgba(255, 255, 255, 0.95);
-    border: 2px solid #667eea;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    border: var(--size-controls-button-border-width) solid var(--color-button-border);
+    width: var(--size-controls-button-width);
+    height: var(--size-controls-button-height);
+    border-radius: var(--size-border-radius-circle);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: var(--size-controls-button-font-size);
     font-weight: bold;
-    color: #667eea;
-    pointer-events: all; /* Включаем события для кнопок */
+    color: var(--color-button-border);
+    pointer-events: all;
     transition: all 0.3s ease;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--shadow-controls-button);
 }
 
 .slider-btn:hover:not(:disabled) {
-    background: white;
+    background: var(--color-text-light);
     transform: scale(1.1);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    color: #764ba2;
+    box-shadow: var(--shadow-controls-button-hover);
+    color: var(--color-button-hover);
 }
 
 .slider-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
-    background: rgba(200, 200, 200, 0.7);
-    border-color: #ccc;
-    color: #999;
+    background: var(--color-button-disabled-bg);
+    border-color: var(--color-button-disabled-border);
+    color: var(--color-button-disabled-text);
 }
 
 .slider-btn.loading {
@@ -50,12 +50,12 @@
 }
 
 .spinner {
-    width: 24px;
-    height: 24px;
-    border: 3px solid rgba(102, 126, 234, 0.3);
-    border-top: 3px solid #667eea;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    width: var(--size-spinner-width-small);
+    height: var(--size-spinner-height-small);
+    border: var(--size-spinner-border-width-small) solid rgba(102, 126, 234, 0.3);
+    border-top: var(--size-spinner-border-width-small) solid var(--color-spinner-border-top);
+    border-radius: var(--size-border-radius-circle);
+    animation: spin var(--size-track-transition-duration) linear infinite;
 }
 
 @keyframes spin {

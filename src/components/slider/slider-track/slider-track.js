@@ -1,7 +1,6 @@
 import cssContent from './slider-track.css?raw';
 import htmlContent from './slider-track.html?raw';
 import { container } from '@/core/DI.js';
-
 class SliderTrackController {
     constructor(element, sliderService) {
         this.element = element;
@@ -12,7 +11,6 @@ class SliderTrackController {
         this.unsubscribeLoading = null;
         this.isLoading = false;
     }
-
     async init() {
         if (!this.sliderService) {
             console.error('SliderService not available in SliderTrackController');
@@ -22,7 +20,6 @@ class SliderTrackController {
         this.subscribeToService();
         this.initSlides();
     }
-
     render() {
         const template = document.getElementById('slider-track-template');
         if (template) {
@@ -37,14 +34,12 @@ class SliderTrackController {
             this.element.shadowRoot.innerHTML = `<style>${cssContent}</style><div>Ошибка загрузки шаблона slider-track</div>`;
         }
     }
-
     initSlides() {
         const slides = this.sliderService.getSlides();
         if (slides.length > 0) {
             this.setSlides(slides);
         }
     }
-
     subscribeToService() {
         this.unsubscribeSlides = this.sliderService.subscribeToSlides((slides) => {
             this.setSlides(slides);
@@ -57,19 +52,16 @@ class SliderTrackController {
             this.handleLoadingState();
         });
     }
-
     handleLoadingState() {
         const track = this.element.shadowRoot.querySelector('.slider-track');
         if (track) {
             track.style.opacity = this.isLoading ? '0.7' : '1';
         }
     }
-
     setSlides(slides) {
         this.slides = slides || [];
         this.renderSlides();
     }
-
     renderSlides() {
         const track = this.element.shadowRoot.querySelector('.slider-track');
         if (!track) return;
@@ -88,19 +80,16 @@ class SliderTrackController {
             this.addLoadingIndicator(track);
         }
     }
-
     addLoadingIndicator(track) {
         const loadingElement = document.createElement('div');
         loadingElement.className = 'loading-indicator';
         loadingElement.innerHTML = `<div class="spinner"></div>`;
         track.appendChild(loadingElement);
     }
-
     setCurrentIndex(index) {
         this.currentIndex = index;
         this.scrollToSlide(index);
     }
-
     scrollToSlide(index) {
         const track = this.element.shadowRoot.querySelector('.slider-track');
         const slideWidth = this.getSlideWidth();
@@ -112,19 +101,16 @@ class SliderTrackController {
             track.style.transform = `translateX(-${index * slideWidth}px)`;
         });
     }
-
     getSlideWidth() {
         const firstSlide = this.element.shadowRoot.querySelector('slider-slide');
         return firstSlide?.offsetWidth || 400;
     }
-
     destroy() {
         if (this.unsubscribeSlides) this.unsubscribeSlides();
         if (this.unsubscribeIndex) this.unsubscribeIndex();
         if (this.unsubscribeLoading) this.unsubscribeLoading();
     }
 }
-
 class SliderTrack extends HTMLElement {
     constructor() {
         super();
@@ -137,19 +123,16 @@ class SliderTrack extends HTMLElement {
             console.error('Failed to resolve SliderService in SliderTrack:', error);
         }
     }
-
     async connectedCallback() {
         const templateService = container.resolve('TemplateService');
         await templateService.loadOnce('slider-track', htmlContent);
         this.controller = new SliderTrackController(this, this.sliderService);
         this.controller.init();
     }
-
     disconnectedCallback() {
         if (this.controller) {
             this.controller.destroy();
         }
     }
 }
-
 customElements.define('slider-track', SliderTrack);

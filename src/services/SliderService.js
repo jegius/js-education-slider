@@ -1,6 +1,5 @@
 import { apiService } from './api.js';
 import { EventEmitter } from '@/core/EventEmitter.js';
-
 export class SliderService {
     constructor() {
         this.eventEmitter = new EventEmitter();
@@ -20,23 +19,18 @@ export class SliderService {
         this.pendingOperations = new Set();
         this.slideDataMap = new Map();
     }
-
     on(event, callback) {
         return this.eventEmitter.on(event, callback);
     }
-
     off(event, callback) {
         this.eventEmitter.off(event, callback);
     }
-
     emit(event, data) {
         this.eventEmitter.emit(event, data);
     }
-
     once(event, callback) {
         this.eventEmitter.once(event, callback);
     }
-
     setSlideData(slideData) {
         if (!slideData || slideData.id == null) {
             console.error('Invalid slide data provided to setSlideData', slideData);
@@ -47,11 +41,9 @@ export class SliderService {
         this.slideDataMap.set(slideId, slideData);
         this.emit('slideDataChanged', { slideId, slideData, isNew });
     }
-
     getSlideData(slideId) {
         return this.slideDataMap.get(slideId) || null;
     }
-
     observeSlideData(slideId) {
         return (callback) => {
             const handler = (data) => {
@@ -71,7 +63,6 @@ export class SliderService {
             return unsubscribe;
         };
     }
-
     async loadSlides(offset = 0, limit = 10) {
         const cacheKey = `slides_${offset}_${limit}`;
         if (this.cacheService.has(cacheKey)) {
@@ -90,7 +81,6 @@ export class SliderService {
             throw error;
         }
     }
-
     async initialize() {
         if (this.initialized) return;
         try {
@@ -118,15 +108,12 @@ export class SliderService {
             }
         }
     }
-
     getSlides() {
         return this.navigationService.getSlides();
     }
-
     getCurrentIndex() {
         return this.navigationService.getCurrentIndex();
     }
-
     async goToSlide(index) {
         const operationId = Symbol('goToSlide');
         this.pendingOperations.add(operationId);
@@ -166,7 +153,6 @@ export class SliderService {
             this.pendingOperations.delete(operationId);
         }
     }
-
     async nextSlide() {
         const operationId = Symbol('nextSlide');
         this.pendingOperations.add(operationId);
@@ -199,7 +185,6 @@ export class SliderService {
             this.pendingOperations.delete(operationId);
         }
     }
-
     async prevSlide() {
         const operationId = Symbol('prevSlide');
         this.pendingOperations.add(operationId);
@@ -215,7 +200,6 @@ export class SliderService {
             this.pendingOperations.delete(operationId);
         }
     }
-
     async loadMoreSlides(currentSlides, limit = 5) {
         if (this.isLoading || !this.hasMore) return currentSlides;
         const operationId = Symbol('loadMoreSlides');
@@ -254,48 +238,37 @@ export class SliderService {
             }
         }
     }
-
     registerTemplate(name, templateFunction) {
         this.templateService.registerTemplate(name, templateFunction);
         this.emit('templateRegistered', { name, templateFunction });
     }
-
     getTemplate(name) {
         return this.templateService.getTemplate(name);
     }
-
     isLoadingState() {
         return this.isLoading;
     }
-
     hasMoreSlides() {
         return this.hasMore;
     }
-
     hasPendingOperations() {
         return this.pendingOperations.size > 0;
     }
-
     subscribeToSlides(callback) {
         return this.on('slidesChanged', callback);
     }
-
     subscribeToIndex(callback) {
         return this.on('indexChanged', callback);
     }
-
     subscribeToLoading(callback) {
         return this.on('loading', callback);
     }
-
     subscribeToHasMore(callback) {
         return this.on('hasMoreChanged', callback);
     }
-
     subscribeToTemplates(callback) {
         return this.on('templateRegistered', callback);
     }
-
     subscribeToInitializationError(callback) {
         return this.on('initializationError', callback);
     }

@@ -9,51 +9,51 @@
     max-width: 800px;
     margin: 0 auto;
     overflow: hidden;
-    border-radius: 12px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    background: white;
+    border-radius: var(--size-border-radius-large);
+    box-shadow: var(--shadow-slider);
+    background: var(--color-text-light);
 }
 
 .error-message {
-    padding: 40px;
+    padding: calc(var(--size-app-container-padding) * 2);
     text-align: center;
-    color: #ff6b6b;
-    font-size: 18px;
+    color: var(--color-error-text);
+    font-size: 1.125rem; /* 18px / 16px */
 }
 
 .loading-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 400px;
+    height: var(--size-placeholder-height);
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #667eea;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+    width: var(--size-spinner-width);
+    height: var(--size-spinner-height);
+    border: var(--size-spinner-border-width) solid var(--color-spinner-border);
+    border-top: var(--size-spinner-border-width) solid var(--color-spinner-border-top);
+    border-radius: var(--size-border-radius-circle);
+    animation: spin var(--size-track-transition-duration) linear infinite;
 }
 
 .retry-container {
     text-align: center;
-    padding: 20px;
+    padding: var(--size-app-container-padding);
 }
 
 .retry-btn {
-    background: #667eea;
-    color: white;
+    background: var(--color-primary);
+    color: var(--color-text-light);
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 0.625rem 1.25rem; /* 10px 20px / 16px */
+    border-radius: var(--size-border-radius-small);
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1rem;
 }
 
 .retry-btn:hover {
-    background: #5a6fd8;
+    background: var(--color-primary-dark);
 }
 
 @keyframes spin {

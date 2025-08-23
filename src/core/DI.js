@@ -3,7 +3,6 @@ class DIContainer {
         this.services = new Map();
         this.singletons = new Map();
     }
-
     register(name, factory, options = {}) {
         this.services.set(name, {
             factory,
@@ -11,14 +10,11 @@ class DIContainer {
             instance: null
         });
     }
-
     resolve(name) {
         const service = this.services.get(name);
-
         if (!service) {
             throw new Error(`Service ${name} not found`);
         }
-
         if (service.singleton) {
             if (!this.singletons.has(name)) {
                 const instance = service.factory(this);
@@ -26,15 +22,10 @@ class DIContainer {
             }
             return this.singletons.get(name);
         }
-
         return service.factory(this);
     }
-
-    // Метод для удобного получения сервисов
     get(name) {
         return this.resolve(name);
     }
 }
-
-// Глобальный контейнер DI
 export const container = new DIContainer();
