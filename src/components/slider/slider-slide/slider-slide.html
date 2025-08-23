@@ -10,7 +10,12 @@
 <template id="slider-slide-default">
     <div class="slider-slide">
         <div class="slide-content">
-            <img src="/placeholder.jpg" alt="Слайд" class="slide-image" onerror="this.src='/placeholder.jpg'">
+            <div class="slide-image">
+                <img src="/placeholder.jpg" alt="Слайд" onerror="this.src='/placeholder.jpg'">
+                <div class="loading-placeholder">
+                    <div class="spinner"></div>
+                </div>
+            </div>
             <div class="slide-info">
                 <h3 class="slide-title">Без названия</h3>
                 <p class="slide-description">Описание отсутствует</p>

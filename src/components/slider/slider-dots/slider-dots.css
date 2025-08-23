@@ -8,6 +8,7 @@
     border-radius: 0 0 var(--size-border-radius-large) var(--size-border-radius-large);
     border-top: 1px solid var(--color-border-strong);
     flex-shrink: 0;
+    flex-wrap: wrap;
 }
 .dot {
     width: var(--size-dot-width);
@@ -40,7 +41,6 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
-
 @media (max-width: 768px) {
     .slider-dots {
         padding: 15px;
@@ -51,7 +51,6 @@
         height: 12px;
     }
 }
-
 @media (max-width: 480px) {
     .slider-dots {
         padding: 10px;

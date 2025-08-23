@@ -20,11 +20,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         sliderService.registerTemplate('image-focused', (slideData) => `
             <div class="slide-content image-focused">
-                <div class="slide-image-container">
+                 <div class="slide-image">
                     <img src="${slideData.image || '/placeholder.jpg'}"
                          alt="${slideData.title || 'Слайд'}"
-                         class="slide-image"
                          onerror="this.src='/placeholder.jpg'">
+                    <div class="loading-placeholder">
+                        <div class="spinner"></div>
+                    </div>
                 </div>
                 <div class="slide-info">
                     <h3 class="slide-title">${slideData.title || 'Без названия'}</h3>
@@ -37,6 +39,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="slide-content minimal">
                 <div class="slide-header">
                     <span class="slide-id">ID: ${slideData.id}</span>
+                </div>
+                 <div class="slide-image">
+                    <img src="${slideData.image || '/placeholder.jpg'}"
+                         alt="${slideData.title || 'Слайд'}"
+                         onerror="this.src='/placeholder.jpg'">
+                    <div class="loading-placeholder">
+                        <div class="spinner"></div>
+                    </div>
                 </div>
                 <h3 class="slide-title">${slideData.title || 'Без названия'}</h3>
                 <p class="slide-description">${slideData.description || 'Описание отсутствует'}</p>

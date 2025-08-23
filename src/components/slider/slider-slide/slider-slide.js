@@ -90,6 +90,17 @@ class SliderSlideController {
             styleElement.textContent = cssContent;
             this.element.shadowRoot.appendChild(styleElement);
             this.element.shadowRoot.innerHTML += htmlContent;
+
+            const img = this.element.shadowRoot.querySelector('.slide-image img');
+            if (img) {
+                const spinnerContainer = img.closest('.slide-image')?.querySelector('.loading-placeholder');
+                img.addEventListener('load', () => {
+                    if (spinnerContainer) spinnerContainer.style.display = 'none';
+                });
+                img.addEventListener('error', () => {
+                    console.warn(`Image failed to load for slide ${slideData?.id}`);
+                });
+            }
         } catch (error) {
             console.error('Error rendering custom template:', error);
             this.renderDefaultTemplate(slideData);
@@ -103,15 +114,27 @@ class SliderSlideController {
             styleElement.textContent = cssContent;
             this.element.shadowRoot.appendChild(styleElement);
             const clone = document.importNode(template.content, true);
-            const img = clone.querySelector('.slide-image');
+            const img = clone.querySelector('.slide-image img');
             const title = clone.querySelector('.slide-title');
             const description = clone.querySelector('.slide-description');
             const idSpan = clone.querySelector('.slide-id');
-            if (img) img.src = slideData.image || '/placeholder.jpg';
-            if (img) img.alt = slideData.title || 'Слайд';
+
+            if (img) {
+                img.src = slideData.image || '/placeholder.jpg';
+                img.alt = slideData.title || 'Слайд';
+                const spinnerContainer = img.closest('.slide-image')?.querySelector('.loading-placeholder');
+                img.addEventListener('load', () => {
+                    if (spinnerContainer) spinnerContainer.style.display = 'none';
+                });
+                img.addEventListener('error', () => {
+                    console.warn(`Image failed to load for slide ${slideData?.id}`);
+                });
+            }
+
             if (title) title.textContent = slideData.title || 'Без названия';
             if (description) description.textContent = slideData.description || 'Описание отсутствует';
             if (idSpan) idSpan.textContent = `ID: ${slideData.id}`;
+
             this.element.shadowRoot.appendChild(clone);
         } else {
             console.error('SliderSlide default template not found');
