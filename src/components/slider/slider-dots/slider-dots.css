@@ -7,8 +7,8 @@
     backdrop-filter: blur(10px);
     border-radius: 0 0 var(--size-border-radius-large) var(--size-border-radius-large);
     border-top: 1px solid var(--color-border-strong);
-    flex-shrink: 0;
     flex-wrap: wrap;
+    flex-shrink: 0;
 }
 
 .dot {
@@ -18,9 +18,8 @@
     border: var(--size-dot-border-width) solid var(--color-dot-border);
     background: transparent;
     cursor: pointer;
-    transition: all 0.3s ease;
     box-shadow: var(--shadow-dot);
-    flex-shrink: 0;
+    transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
 }
 
 .dot.active {
@@ -46,25 +45,4 @@
 .dot:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-@media (max-width: 768px) {
-    .slider-dots {
-        padding: 15px;
-        gap: 8px;
-    }
-    .dot {
-        width: 12px;
-        height: 12px;
-    }
-}
-@media (max-width: 480px) {
-    .slider-dots {
-        padding: 10px;
-        gap: 6px;
-    }
-    .dot {
-        width: 10px;
-        height: 10px;
-    }
 }

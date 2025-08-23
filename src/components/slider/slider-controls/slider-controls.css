@@ -1,13 +1,11 @@
 .slider-controls {
-    position: absolute;
-    top: 50%;
-    width: calc(100% + (var(--size-controls-offset) * 2));
     display: flex;
     justify-content: space-between;
-    transform: translateY(-50%);
-    pointer-events: none;
-    z-index: 10;
-    left: calc(-1 * var(--size-controls-offset));
+    align-items: center;
+    padding: 0 var(--size-controls-offset);
+    margin: 1rem 0;
+    gap: 1rem;
+    flex-shrink: 0;
 }
 
 .slider-btn {
@@ -16,17 +14,16 @@
     width: var(--size-button-width);
     height: var(--size-button-height);
     border-radius: var(--size-border-radius-circle);
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: var(--size-button-font-size);
     font-weight: bold;
     color: var(--color-button-border);
-    pointer-events: all;
-    transition: all 0.3s ease;
+    cursor: pointer;
     box-shadow: var(--shadow-controls-button);
     flex-shrink: 0;
+    transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .slider-btn:hover:not(:disabled) {
@@ -39,10 +36,10 @@
 .slider-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
     background: var(--color-button-disabled-bg);
     border-color: var(--color-button-disabled-border);
     color: var(--color-button-disabled-text);
+    transform: none;
 }
 
 .slider-btn.loading {
@@ -62,18 +59,4 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-@media (max-width: 768px) {
-    .slider-controls {
-        left: calc(-1 * 20px);
-        width: calc(100% + 40px);
-    }
-}
-
-@media (max-width: 480px) {
-    .slider-controls {
-        left: calc(-1 * 10px);
-        width: calc(100% + 20px);
-    }
 }
