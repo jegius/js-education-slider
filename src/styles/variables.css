@@ -1,5 +1,4 @@
 :root {
-    /* Цвета */
     --color-primary: #667eea;
     --color-primary-dark: #5a6fd8;
     --color-secondary: #764ba2;
@@ -32,8 +31,6 @@
     --color-error-text: #ff6b6b;
     --color-error-bg: #ffe6e6;
     --color-focus-outline: #667eea;
-
-    /* Размеры */
     --size-border-radius-small: 5px;
     --size-border-radius-medium: 8px;
     --size-border-radius-large: 12px;
@@ -50,47 +47,72 @@
     --size-spinner-width-small: 24px;
     --size-spinner-height-small: 24px;
     --size-spinner-border-width-small: 3px;
-    --size-slide-height: 400px;
     --size-slide-margin: 12px;
-    --size-slide-padding: 1.5rem; /* 24px / 16px */
-    --size-slide-image-height: calc(250px - 2.5rem); /* Примерный пересчет */
+    --size-slide-padding: 1.5rem;
     --size-slide-title-font-size: 1.6rem;
     --size-slide-meta-font-size: 0.9rem;
     --size-slide-id-padding-vertical: 5px;
     --size-slide-id-padding-horizontal: 12px;
     --size-slide-id-border-radius: 20px;
-    --size-placeholder-height: 400px;
-    --size-placeholder-spinner-width: 45px;
-    --size-placeholder-spinner-height: 45px;
-    --size-placeholder-spinner-border-width: 4px;
     --size-controls-offset: 40px;
-    --size-controls-button-width: 60px;
-    --size-controls-button-height: 60px;
     --size-controls-button-border-width: 2px;
-    --size-controls-button-font-size: 24px;
     --size-dots-padding: 25px;
     --size-dots-gap: 12px;
-    --size-track-transition-duration: 0.4s;
-    --size-track-transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --size-track-transition-duration: 0.5s;
+    --size-track-transition-timing-function: ease-in-out;
     --size-app-header-padding: 2rem;
     --size-app-header-title-font-size: 2.5rem;
     --size-app-header-subtitle-font-size: 1.2rem;
     --size-app-container-padding: 2rem;
     --size-focus-outline-width: 2px;
     --size-focus-outline-offset: 2px;
-
-    /* Тени */
     --shadow-slider: 0 20px 40px rgba(0, 0, 0, 0.3);
     --shadow-slide: 0 10px 30px rgba(0, 0, 0, 0.15);
     --shadow-controls-button: 0 6px 20px rgba(0, 0, 0, 0.2);
     --shadow-controls-button-hover: 0 8px 25px rgba(0, 0, 0, 0.3);
     --shadow-placeholder: 0 10px 30px rgba(0, 0, 0, 0.1);
     --shadow-dot: 0 2px 6px rgba(0, 0, 0, 0.1);
-
-    /* Шрифты */
     --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
     --font-smoothing-webkit: antialiased;
     --font-smoothing-moz: grayscale;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --size-button-width: 45px;
+        --size-button-height: 45px;
+        --size-button-font-size: 20px;
+        --size-dot-width: 12px;
+        --size-dot-height: 12px;
+        --size-controls-offset: 20px;
+        --size-dots-padding: 15px;
+        --size-dots-gap: 8px;
+        --size-slide-padding: 1rem;
+        --size-slide-title-font-size: 1.4rem;
+        --size-app-header-padding: 1.5rem;
+        --size-app-container-padding: 1.5rem;
+        --size-app-header-title-font-size: 2rem;
+        --size-app-header-subtitle-font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --size-button-width: 35px;
+        --size-button-height: 35px;
+        --size-button-font-size: 18px;
+        --size-dot-width: 10px;
+        --size-dot-height: 10px;
+        --size-controls-offset: 10px;
+        --size-dots-padding: 10px;
+        --size-dots-gap: 6px;
+        --size-slide-padding: 0.75rem;
+        --size-slide-title-font-size: 1.2rem;
+        --size-app-header-padding: 1rem;
+        --size-app-container-padding: 1rem;
+        --size-app-header-title-font-size: 1.8rem;
+        --size-app-header-subtitle-font-size: 0.9rem;
+    }
 }

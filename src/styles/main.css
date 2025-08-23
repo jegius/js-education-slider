@@ -1,11 +1,13 @@
-/* src/styles/main.css */
-
 @import './variables.css';
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
 }
 
 body {
@@ -28,6 +30,7 @@ button:focus {
 img {
     max-width: 100%;
     height: auto;
+    display: block;
 }
 
 .container {
@@ -35,4 +38,10 @@ img {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 10px;
+    }
 }

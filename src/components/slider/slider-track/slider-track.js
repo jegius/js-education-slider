@@ -93,13 +93,10 @@ class SliderTrackController {
     scrollToSlide(index) {
         const track = this.element.shadowRoot.querySelector('.slider-track');
         const slideWidth = this.getSlideWidth();
+
         if (!track) return;
-        track.style.transition = 'none';
+
         track.style.transform = `translateX(-${index * slideWidth}px)`;
-        requestAnimationFrame(() => {
-            track.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            track.style.transform = `translateX(-${index * slideWidth}px)`;
-        });
     }
     getSlideWidth() {
         const firstSlide = this.element.shadowRoot.querySelector('slider-slide');

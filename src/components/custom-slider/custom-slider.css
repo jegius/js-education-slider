@@ -1,33 +1,34 @@
 :host {
     display: block;
     width: 100%;
+    height: 100%;
+    min-height: 300px;
 }
-
 .slider-container {
     position: relative;
     width: 100%;
-    max-width: 800px;
+    height: 100%;
+    max-width: 100%;
     margin: 0 auto;
     overflow: hidden;
     border-radius: var(--size-border-radius-large);
     box-shadow: var(--shadow-slider);
     background: var(--color-text-light);
+    display: flex;
+    flex-direction: column;
 }
-
 .error-message {
     padding: calc(var(--size-app-container-padding) * 2);
     text-align: center;
     color: var(--color-error-text);
-    font-size: 1.125rem; /* 18px / 16px */
+    font-size: 1.125rem;
 }
-
 .loading-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: var(--size-placeholder-height);
+    flex-grow: 1;
 }
-
 .spinner {
     width: var(--size-spinner-width);
     height: var(--size-spinner-height);
@@ -36,27 +37,34 @@
     border-radius: var(--size-border-radius-circle);
     animation: spin var(--size-track-transition-duration) linear infinite;
 }
-
 .retry-container {
     text-align: center;
     padding: var(--size-app-container-padding);
 }
-
 .retry-btn {
     background: var(--color-primary);
     color: var(--color-text-light);
     border: none;
-    padding: 0.625rem 1.25rem; /* 10px 20px / 16px */
+    padding: 0.625rem 1.25rem;
     border-radius: var(--size-border-radius-small);
     cursor: pointer;
     font-size: 1rem;
 }
-
 .retry-btn:hover {
     background: var(--color-primary-dark);
 }
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .error-message {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+    .retry-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
 }

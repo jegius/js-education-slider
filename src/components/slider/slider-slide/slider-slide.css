@@ -3,11 +3,10 @@
     flex-shrink: 0;
     display: block;
     width: 100%;
-    height: var(--size-slide-height);
+    height: 100%;
     overflow: hidden;
     box-sizing: border-box;
 }
-
 .slider-slide {
     min-width: 100%;
     flex-shrink: 0;
@@ -16,60 +15,60 @@
     overflow: hidden;
     box-sizing: border-box;
 }
-
 .slide-content {
-    width: calc(100% - var(--size-slide-padding));
-    height: calc(100% - var(--size-slide-padding));
+    width: calc(100% - (var(--size-slide-margin) * 2));
+    height: calc(100% - (var(--size-slide-margin) * 2));
     overflow: hidden;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     background: linear-gradient(135deg, var(--color-slide-background-gradient-start) 0%, var(--color-slide-background-gradient-end) 100%);
-    border-radius: calc(var(--size-border-radius-large) + 4px); /* 16px */
+    border-radius: calc(var(--size-border-radius-large) + 4px);
     margin: var(--size-slide-margin);
     box-shadow: var(--shadow-slide);
     border: 1px solid var(--color-border);
 }
-
 .slide-image {
     width: 100%;
-    height: var(--size-slide-image-height);
+    max-height: 60%;
     object-fit: cover;
-    border-radius: calc(var(--size-border-radius-large) + 3px) calc(var(--size-border-radius-large) + 3px) 0 0; /* 15px 15px 0 0 */
+    border-radius: calc(var(--size-border-radius-large) + 3px) calc(var(--size-border-radius-large) + 3px) 0 0;
+    flex-shrink: 0;
 }
-
 .slide-info {
     flex: 1;
-    padding: 1.25rem; /* 20px / 16px */
+    padding: var(--size-slide-padding);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
-
 .slide-title {
-    margin: 0 0 0.75rem 0; /* 0 0 12px 0 */
+    margin: 0 0 0.75rem 0;
     font-size: var(--size-slide-title-font-size);
     color: var(--color-text-primary);
     font-weight: 700;
     line-height: 1.3;
+    flex-shrink: 0;
 }
-
 .slide-description {
-    margin: 0 0 0.9375rem 0; /* 0 0 15px 0 */
+    margin: 0 0 0.9375rem 0;
     color: var(--color-text-secondary);
     line-height: 1.6;
     flex: 1;
     overflow: hidden;
-    word-wrap: break-word;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
-
 .slide-meta {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: var(--size-slide-meta-font-size);
     color: var(--color-text-meta);
+    flex-shrink: 0;
 }
-
 .slide-id {
     background: linear-gradient(135deg, var(--color-background-gradient-start) 0%, var(--color-secondary) 100%);
     color: var(--color-text-light);
@@ -77,28 +76,25 @@
     border-radius: var(--size-slide-id-border-radius);
     font-weight: 600;
     user-select: none;
+    flex-shrink: 0;
 }
-
 .slide-placeholder {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: var(--size-placeholder-height);
     background: linear-gradient(135deg, var(--color-placeholder-background-gradient-start) 0%, var(--color-placeholder-background-gradient-end) 100%);
-    border-radius: calc(var(--size-border-radius-large) + 4px); /* 16px */
+    border-radius: calc(var(--size-border-radius-large) + 4px);
     margin: var(--size-slide-margin);
     color: var(--color-text-meta);
     font-style: italic;
     box-shadow: var(--shadow-placeholder);
 }
-
 .loading {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem; /* 12px / 16px */
+    gap: 0.75rem;
 }
-
 .spinner {
     width: var(--size-placeholder-spinner-width);
     height: var(--size-placeholder-spinner-height);
@@ -107,8 +103,44 @@
     border-radius: var(--size-border-radius-circle);
     animation: spin var(--size-track-transition-duration) linear infinite;
 }
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .slide-content {
+        margin: 8px;
+        padding: 1rem;
+    }
+    .slide-title {
+        font-size: 1.4rem;
+    }
+    .slide-description {
+        font-size: 0.9rem;
+        -webkit-line-clamp: 2;
+    }
+    .slide-meta {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .slide-content {
+        margin: 6px;
+        padding: 0.75rem;
+    }
+    .slide-title {
+        font-size: 1.2rem;
+    }
+    .slide-description {
+        font-size: 0.85rem;
+    }
+    .slide-meta {
+        font-size: 0.75rem;
+    }
+    .slide-id {
+        padding: 3px 8px;
+        font-size: 0.7rem;
+    }
 }

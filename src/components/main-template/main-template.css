@@ -1,30 +1,65 @@
 :host {
     display: block;
+    width: 100%;
+    height: 100vh;
 }
-
 .app {
     min-height: 100vh;
     background: linear-gradient(135deg, var(--color-background-gradient-start) 0%, var(--color-background-gradient-end) 100%);
+    display: flex;
+    flex-direction: column;
 }
-
 .header {
     text-align: center;
     padding: var(--size-app-header-padding);
     color: var(--color-text-light);
+    flex-shrink: 0;
 }
-
 .header h1 {
     margin: 0 0 1rem 0;
     font-size: var(--size-app-header-title-font-size);
 }
-
 .header p {
     font-size: var(--size-app-header-subtitle-font-size);
     opacity: 0.9;
 }
-
 .container {
-    max-width: 1200px;
+    max-width: 100%;
+    height: 20rem;
     margin: 0 auto;
     padding: var(--size-app-container-padding);
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 1.5rem;
+    }
+    .header h1 {
+        font-size: 2rem;
+    }
+    .header p {
+        font-size: 1rem;
+    }
+    .container {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 1rem;
+    }
+    .header h1 {
+        font-size: 1.8rem;
+    }
+    .header p {
+        font-size: 0.9rem;
+    }
+    .container {
+        padding: 1rem;
+    }
 }
